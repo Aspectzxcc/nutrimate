@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -172,7 +173,7 @@ export default function NutriMateApp() {
       }, 1500)
       return () => clearInterval(interval)
     }
-  }, [currentScreen])
+  }, [currentScreen, loadingTexts.length])
 
   const toggleSelection = (item: string, field: "dietary" | "goals") => {
     setUserProfile((prev) => ({
@@ -205,7 +206,7 @@ export default function NutriMateApp() {
           <ChefHat className="w-16 h-16 mx-auto mb-4 text-green-600" />
           <h1 className="text-3xl font-bold text-green-900 mb-2">Welcome to NutriMate!</h1>
           <p className="text-green-700">
-            Let's start by personalizing your plan. Select any dietary lifestyles or restrictions.
+            Let&apos;s start by personalizing your plan. Select any dietary lifestyles or restrictions.
           </p>
         </div>
 
@@ -281,7 +282,7 @@ export default function NutriMateApp() {
           </div>
 
           <div>
-            <Label className="text-base font-semibold mb-4 block">What's your average budget per meal?</Label>
+            <Label className="text-base font-semibold mb-4 block">What&apos;s your average budget per meal?</Label>
             <div className="px-4">
               <Slider
                 value={[userProfile.budget]}
@@ -384,9 +385,9 @@ export default function NutriMateApp() {
           </div>
 
           <div>
-            <h1 className="text-3xl font-bold text-green-900 mb-2">You're all set!</h1>
+            <h1 className="text-3xl font-bold text-green-900 mb-2">You&apos;re all set!</h1>
             <p className="text-green-700 text-lg">
-              Your personalized profile is ready. Let's create your first weekly meal plan.
+              Your personalized profile is ready. Let&apos;s create your first weekly meal plan.
             </p>
           </div>
 
@@ -464,9 +465,11 @@ export default function NutriMateApp() {
                       setCurrentScreen("recipe")
                     }}
                   >
-                    <img
+                    <Image
                       src={recipe.image || "/placeholder.svg"}
                       alt={recipe.name}
+                      width={64}
+                      height={64}
                       className="w-16 h-16 rounded-lg object-cover"
                     />
                     <div className="flex-1">
@@ -512,9 +515,11 @@ export default function NutriMateApp() {
     return (
       <div className="min-h-screen bg-white">
         <div className="relative">
-          <img
+          <Image
             src={selectedRecipe.image || "/placeholder.svg"}
             alt={selectedRecipe.name}
+            width={400}
+            height={256}
             className="w-full h-64 object-cover"
           />
           <Button
@@ -601,7 +606,7 @@ export default function NutriMateApp() {
     <div className="min-h-screen bg-green-50">
       <div className="bg-white border-b px-4 py-4">
         <h1 className="text-xl font-bold text-green-900">Grocery List</h1>
-        <p className="text-sm text-green-700">For this week's meal plan</p>
+        <p className="text-sm text-green-700">For this week&apos;s meal plan</p>
       </div>
 
       <div className="p-4 space-y-6">
