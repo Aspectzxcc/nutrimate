@@ -27,9 +27,11 @@ import {
   Calendar,
   Shuffle,
   Heart,
+  Star,
+  MessageCircle,
 } from "lucide-react"
 
-type Screen = "dietary" | "goals" | "kitchen" | "dashboard" | "loading" | "plan" | "recipe" | "grocery" | "profile"
+type Screen = "dietary" | "goals" | "kitchen" | "dashboard" | "loading" | "plan" | "recipe" | "grocery" | "profile" | "reviews"
 
 interface UserProfile {
   dietary: string[]
@@ -54,13 +56,26 @@ interface Recipe {
   tags: string[]
 }
 
+interface Review {
+  id: string
+  userId: string
+  userName: string
+  userAvatar?: string
+  rating: number
+  title: string
+  comment: string
+  date: string
+  helpful: number
+  verified: boolean
+}
+
 const mockRecipes: Recipe[] = [
   {
     id: "1",
     name: "Mediterranean Quinoa Bowl",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/images/recipes/mediterranean-quinoa-bowl.jpg",
     calories: 420,
-    cost: 8.5,
+    cost: 180,
     prepTime: 25,
     servings: 2,
     ingredients: [
@@ -84,9 +99,9 @@ const mockRecipes: Recipe[] = [
   {
     id: "2",
     name: "Grilled Salmon with Asparagus",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/images/recipes/grilled-salmon-asparagus.jpg",
     calories: 380,
-    cost: 12.0,
+    cost: 250,
     prepTime: 20,
     servings: 2,
     ingredients: [
@@ -108,9 +123,9 @@ const mockRecipes: Recipe[] = [
   {
     id: "3",
     name: "Veggie Stir Fry",
-    image: "/placeholder.svg?height=200&width=300",
+    image: "/images/recipes/veggie-stir-fry.jpg",
     calories: 320,
-    cost: 6.75,
+    cost: 140,
     prepTime: 15,
     servings: 2,
     ingredients: [
@@ -132,23 +147,153 @@ const mockRecipes: Recipe[] = [
   },
 ]
 
+const mockReviews: { [recipeId: string]: Review[] } = {
+  "1": [
+    {
+      id: "r1",
+      userId: "u1",
+      userName: "Sarah M.",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 5,
+      title: "Perfect for meal prep!",
+      comment: "This Mediterranean quinoa bowl has become my go-to lunch. The flavors are amazing and it keeps me full for hours. I make a big batch on Sunday and eat it all week.",
+      date: "2024-01-15",
+      helpful: 23,
+      verified: true,
+    },
+    {
+      id: "r2",
+      userId: "u2",
+      userName: "Mike Chen",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 4,
+      title: "Great taste, easy to make",
+      comment: "Really enjoyed this recipe! The instructions were clear and easy to follow. I substituted chickpeas for the feta to make it vegan-friendly. Would definitely make again.",
+      date: "2024-01-12",
+      helpful: 18,
+      verified: true,
+    },
+    {
+      id: "r3",
+      userId: "u3",
+      userName: "Jennifer L.",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 5,
+      title: "Healthy and delicious",
+      comment: "Love how fresh and light this bowl is! Perfect for summer. The lemon dressing really ties everything together. My whole family enjoyed it.",
+      date: "2024-01-10",
+      helpful: 15,
+      verified: false,
+    },
+    {
+      id: "r4",
+      userId: "u4",
+      userName: "David K.",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 3,
+      title: "Good but needs more flavor",
+      comment: "The recipe was okay but I felt it needed more seasoning. I added some oregano and red pepper flakes which helped. The portion size was good though.",
+      date: "2024-01-08",
+      helpful: 7,
+      verified: true,
+    },
+  ],
+  "2": [
+    {
+      id: "r5",
+      userId: "u5",
+      userName: "Lisa R.",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 5,
+      title: "Restaurant quality at home",
+      comment: "This salmon recipe is incredible! The fish came out perfectly flaky and the asparagus was tender. Definitely restaurant quality. My husband was so impressed.",
+      date: "2024-01-14",
+      helpful: 31,
+      verified: true,
+    },
+    {
+      id: "r6",
+      userId: "u6",
+      userName: "Tom Wilson",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 4,
+      title: "Quick and healthy dinner",
+      comment: "Made this for a weeknight dinner and it was perfect. Takes exactly 20 minutes as stated. The garlic really makes a difference. Will add this to my regular rotation.",
+      date: "2024-01-11",
+      helpful: 12,
+      verified: true,
+    },
+    {
+      id: "r7",
+      userId: "u7",
+      userName: "Amanda J.",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 4,
+      title: "Great for special occasions",
+      comment: "Made this for our anniversary dinner and it was wonderful. The presentation was beautiful and the taste was amazing. A bit pricey but worth it for special occasions.",
+      date: "2024-01-09",
+      helpful: 19,
+      verified: false,
+    },
+  ],
+  "3": [
+    {
+      id: "r8",
+      userId: "u8",
+      userName: "Rachel P.",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 5,
+      title: "Budget-friendly and tasty",
+      comment: "This stir fry is amazing for the price! I can make it for under $7 and it feeds my family of 4. The kids love it too. We add different vegetables each time to keep it interesting.",
+      date: "2024-01-13",
+      helpful: 28,
+      verified: true,
+    },
+    {
+      id: "r9",
+      userId: "u9",
+      userName: "Carlos M.",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 4,
+      title: "Quick and satisfying",
+      comment: "Perfect for busy weeknights! I keep all the ingredients on hand and can whip this up in 15 minutes. The sesame oil really adds great flavor.",
+      date: "2024-01-07",
+      helpful: 14,
+      verified: true,
+    },
+    {
+      id: "r10",
+      userId: "u10",
+      userName: "Emily Chen",
+      userAvatar: "/placeholder.svg?height=40&width=40",
+      rating: 5,
+      title: "My favorite vegan meal",
+      comment: "As someone who's been vegan for 5 years, this is one of my favorite recipes. It's filling, nutritious, and so flavorful. I make it at least twice a week!",
+      date: "2024-01-05",
+      helpful: 22,
+      verified: true,
+    },
+  ],
+}
+
 export default function NutriMateApp() {
   const [currentScreen, setCurrentScreen] = useState<Screen>("dietary")
   const [selectedDay, setSelectedDay] = useState("Monday")
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
   const [loadingMessages, setLoadingMessages] = useState(0)
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
   const [userProfile, setUserProfile] = useState<UserProfile>({
     dietary: [],
     allergies: "",
     goals: [],
-    budget: 10,
+    budget: 200,
     cookingTime: 30,
     pantry: "",
     dislikes: "",
   })
 
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-  const dietaryOptions = ["Vegan", "Vegetarian", "Gluten-Free", "Keto", "Paleo", "Dairy-Free"]
+  const dietaryOptions = ["Vegan", "Vegetarian", "Gluten-Free", "Keto", "Paleo", "Dairy-Free", "Pescatarian", "Low-Carb", "Mediterranean", "Whole30", "Other"]
   const goalOptions = ["Eat Healthier", "Save Money", "Lose Weight", "Try New Foods"]
 
   const loadingTexts = [
@@ -182,6 +327,18 @@ export default function NutriMateApp() {
     }))
   }
 
+  const toggleGroceryItem = (item: string) => {
+    setCheckedItems((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(item)) {
+        newSet.delete(item)
+      } else {
+        newSet.add(item)
+      }
+      return newSet
+    })
+  }
+
   const weeklyPlan = {
     Monday: { breakfast: mockRecipes[0], lunch: mockRecipes[1], dinner: mockRecipes[2] },
     Tuesday: { breakfast: mockRecipes[1], lunch: mockRecipes[2], dinner: mockRecipes[0] },
@@ -213,12 +370,12 @@ export default function NutriMateApp() {
         <div className="space-y-6">
           <div>
             <Label className="text-base font-semibold mb-3 block">Dietary Preferences</Label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               {dietaryOptions.map((option) => (
                 <Button
                   key={option}
                   variant={userProfile.dietary.includes(option) ? "default" : "outline"}
-                  className="h-12 text-sm"
+                  className="h-10 text-xs"
                   onClick={() => toggleSelection(option, "dietary")}
                 >
                   {option}
@@ -287,15 +444,15 @@ export default function NutriMateApp() {
               <Slider
                 value={[userProfile.budget]}
                 onValueChange={(value) => setUserProfile((prev) => ({ ...prev, budget: value[0] }))}
-                max={25}
-                min={5}
-                step={2.5}
+                max={500}
+                min={100}
+                step={50}
                 className="mb-4"
               />
               <div className="flex justify-between text-sm text-green-700">
-                <span>$5</span>
-                <span className="font-semibold text-green-600">${userProfile.budget}</span>
-                <span>$25+</span>
+                <span>₱100</span>
+                <span className="font-semibold text-green-600">₱{userProfile.budget}</span>
+                <span>₱500+</span>
               </div>
             </div>
           </div>
@@ -329,12 +486,12 @@ export default function NutriMateApp() {
                 value={[userProfile.cookingTime]}
                 onValueChange={(value) => setUserProfile((prev) => ({ ...prev, cookingTime: value[0] }))}
                 max={60}
-                min={15}
+                min={5}
                 step={5}
                 className="mb-4"
               />
               <div className="flex justify-between text-sm text-green-700">
-                <span>15 min</span>
+                <span>5 min</span>
                 <span className="font-semibold text-green-600">{userProfile.cookingTime} min</span>
                 <span>60+ min</span>
               </div>
@@ -476,7 +633,7 @@ export default function NutriMateApp() {
                       <h3 className="font-semibold text-green-900">{recipe.name}</h3>
                       <div className="flex items-center space-x-4 text-sm text-green-700 mt-1">
                         <span>{recipe.calories} cal</span>
-                        <span>${recipe.cost.toFixed(2)}</span>
+                        <span>₱{recipe.cost.toFixed(0)}</span>
                       </div>
                     </div>
                     <Button variant="ghost" size="sm">
@@ -558,7 +715,7 @@ export default function NutriMateApp() {
             </div>
             <div className="text-center">
               <DollarSign className="w-5 h-5 mx-auto mb-1 text-green-700" />
-              <div className="text-sm font-medium">${selectedRecipe.cost.toFixed(2)}</div>
+              <div className="text-sm font-medium">₱{selectedRecipe.cost.toFixed(0)}</div>
             </div>
           </div>
 
@@ -584,7 +741,7 @@ export default function NutriMateApp() {
 
           <Separator className="my-6" />
 
-          <div className="mb-20">
+          <div className="mb-6">
             <h2 className="text-lg font-semibold mb-4">Instructions</h2>
             <ol className="space-y-4">
               {selectedRecipe.instructions.map((instruction, index) => (
@@ -596,6 +753,87 @@ export default function NutriMateApp() {
                 </li>
               ))}
             </ol>
+          </div>
+
+          <Separator className="my-6" />
+
+          {/* Reviews Section */}
+          <div className="mb-20">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Reviews</h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentScreen("reviews")}
+              >
+                <Star className="w-4 h-4 mr-2" />
+                View All Reviews
+              </Button>
+            </div>
+            
+            {(() => {
+              const reviews = mockReviews[selectedRecipe.id] || []
+              const averageRating = reviews.length > 0 ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : 0
+              
+              return (
+                <div className="space-y-4">
+                  {/* Rating Summary */}
+                  <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg">
+                    <div className="flex items-center space-x-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`w-5 h-5 ${
+                            star <= averageRating
+                              ? "fill-yellow-400 text-yellow-400"
+                              : star - 0.5 <= averageRating
+                              ? "fill-yellow-200 text-yellow-400"
+                              : "fill-gray-200 text-gray-200"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-lg font-semibold text-green-800">
+                      {averageRating.toFixed(1)}
+                    </span>
+                    <span className="text-sm text-green-600">
+                      ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+                    </span>
+                  </div>
+
+                  {/* Latest Reviews Preview */}
+                  {reviews.slice(0, 2).map((review) => (
+                    <div key={review.id} className="p-4 border border-green-100 rounded-lg">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                          <User className="w-4 h-4 text-green-600" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <h4 className="font-medium text-green-900">{review.userName}</h4>
+                            <div className="flex items-center space-x-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                  key={star}
+                                  className={`w-3 h-3 ${
+                                    star <= review.rating
+                                      ? "fill-yellow-400 text-yellow-400"
+                                      : "fill-gray-200 text-gray-200"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-sm text-green-700 line-clamp-2">
+                            {review.comment}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            })()}
           </div>
         </div>
       </div>
@@ -609,7 +847,7 @@ export default function NutriMateApp() {
         <p className="text-sm text-green-700">For this week&apos;s meal plan</p>
       </div>
 
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pb-24">
         {groceryList.map((category) => (
           <Card key={category.category}>
             <CardHeader className="pb-3">
@@ -617,14 +855,39 @@ export default function NutriMateApp() {
             </CardHeader>
             <CardContent className="pt-0">
               <div className="space-y-3">
-                {category.items.map((item) => (
-                  <div key={item} className="flex items-center space-x-3">
-                    <div className="w-5 h-5 border-2 border-gray-300 rounded flex items-center justify-center">
-                      <Check className="w-3 h-3 text-green-600 opacity-0" />
+                {category.items.map((item) => {
+                  const isChecked = checkedItems.has(item)
+                  return (
+                    <div
+                      key={item}
+                      className="flex items-center space-x-3 cursor-pointer hover:bg-green-50 p-2 rounded-lg transition-colors"
+                      onClick={() => toggleGroceryItem(item)}
+                    >
+                      <div
+                        className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-all ${
+                          isChecked
+                            ? "bg-green-500 border-green-500"
+                            : "border-gray-300 hover:border-green-400"
+                        }`}
+                      >
+                        <Check
+                          className={`w-3 h-3 text-white transition-opacity ${
+                            isChecked ? "opacity-100" : "opacity-0"
+                          }`}
+                        />
+                      </div>
+                      <span
+                        className={`flex-1 transition-all ${
+                          isChecked
+                            ? "text-green-600 line-through opacity-60"
+                            : "text-green-900"
+                        }`}
+                      >
+                        {item}
+                      </span>
                     </div>
-                    <span className="flex-1">{item}</span>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </CardContent>
           </Card>
@@ -708,7 +971,7 @@ export default function NutriMateApp() {
 
             <div>
               <Label className="text-green-800 font-medium">Budget per meal</Label>
-              <p className="text-green-700 mt-1">${userProfile.budget}</p>
+              <p className="text-green-700 mt-1">₱{userProfile.budget}</p>
             </div>
 
             <div>
@@ -795,6 +1058,138 @@ export default function NutriMateApp() {
     </div>
   )
 
+  const renderReviews = () => {
+    if (!selectedRecipe) return null
+
+    const reviews = mockReviews[selectedRecipe.id] || []
+    const averageRating = reviews.length > 0 ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : 0
+
+    const renderStars = (rating: number, size: "sm" | "lg" = "sm") => {
+      const starSize = size === "lg" ? "w-5 h-5" : "w-4 h-4"
+      return (
+        <div className="flex items-center space-x-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              className={`${starSize} ${
+                star <= rating
+                  ? "fill-yellow-400 text-yellow-400"
+                  : star - 0.5 <= rating
+                  ? "fill-yellow-200 text-yellow-400"
+                  : "fill-gray-200 text-gray-200"
+              }`}
+            />
+          ))}
+        </div>
+      )
+    }
+
+    return (
+      <div className="min-h-screen bg-white">
+        {/* Header */}
+        <div className="bg-white border-b px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCurrentScreen("recipe")}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Recipe
+            </Button>
+          </div>
+        </div>
+
+        {/* Recipe Summary */}
+        <div className="p-4 border-b bg-green-50">
+          <div className="flex items-center space-x-3">
+            <Image
+              src={selectedRecipe.image || "/placeholder.svg"}
+              alt={selectedRecipe.name}
+              width={60}
+              height={60}
+              className="w-15 h-15 rounded-lg object-cover"
+            />
+            <div className="flex-1">
+              <h1 className="text-lg font-bold text-green-900">{selectedRecipe.name}</h1>
+              <div className="flex items-center space-x-2 mt-1">
+                {renderStars(averageRating, "lg")}
+                <span className="text-lg font-semibold text-green-800">
+                  {averageRating.toFixed(1)}
+                </span>
+                <span className="text-sm text-green-600">
+                  ({reviews.length} review{reviews.length !== 1 ? 's' : ''})
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reviews List */}
+        <div className="p-4">
+          <div className="space-y-6">
+            {reviews.map((review) => (
+              <Card key={review.id} className="border border-green-100">
+                <CardContent className="p-4">
+                  {/* Review Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-semibold text-green-900">{review.userName}</h3>
+                          {review.verified && (
+                            <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                              Verified
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center space-x-2 mt-1">
+                          {renderStars(review.rating)}
+                          <span className="text-xs text-green-600">
+                            {new Date(review.date).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Review Content */}
+                  <div className="mb-3">
+                    <h4 className="font-medium text-green-900 mb-2">{review.title}</h4>
+                    <p className="text-green-700 text-sm leading-relaxed">{review.comment}</p>
+                  </div>
+
+                  {/* Review Actions */}
+                  <div className="flex items-center justify-between pt-3 border-t border-green-100">
+                    <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700 hover:bg-green-50">
+                      <Heart className="w-4 h-4 mr-2" />
+                      Helpful ({review.helpful})
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-green-600 hover:text-green-700 hover:bg-green-50">
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Reply
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Add Review Button */}
+          <div className="mt-8 mb-20">
+            <Button className="w-full h-12" size="lg">
+              <Plus className="w-4 h-4 mr-2" />
+              Write a Review
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   const screens = {
     dietary: renderDietaryScreen,
     goals: renderGoalsScreen,
@@ -805,6 +1200,7 @@ export default function NutriMateApp() {
     recipe: renderRecipe,
     grocery: renderGrocery,
     profile: renderProfile,
+    reviews: renderReviews,
   }
 
   return <div className="max-w-md mx-auto bg-white min-h-screen">{screens[currentScreen]()}</div>
